@@ -13,11 +13,11 @@ Set the following environment variables:
 - `REDDIT_USERNAME` and `REDDIT_PASSWORD` for the bot account
 - `TWITCH_CLIENT_ID`: your twitch app client ID (get it [here](https://dev.twitch.tv/dashboard/apps))
 - `SUBREDDIT_NAME`: the subreddit to operate on
+
 You can get the reddit credentials [here](https://www.reddit.com/prefs/apps/).
 Make sure to add the bot as a moderator on the specific subreddit.
 
-Install dependencies: `pip3 install requests praw` (or through `poetry`: `poetry install`)
-And you're set.
+Install dependencies: `pip3 install requests praw` (or through `poetry`: `poetry install`).
 
 ## Usage
 Create a file named `template.md` and place your subreddit's sidebar
