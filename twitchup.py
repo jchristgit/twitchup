@@ -12,9 +12,9 @@ reddit = praw.Reddit(
     client_secret=os.environ['REDDIT_CLIENT_SECRET'],
     username=os.environ['REDDIT_USERNAME'],
     password=os.environ['REDDIT_PASSWORD'],
-    user_agent=f"{sys.platform}:twitchup:0.1 (by /u/Volcyy)"
+    user_agent=f"{sys.platform}:twitchup:0.1.1 (by /u/Volcyy)"
 )
-COMMAND_RE = re.compile('twitchup(.*)')
+COMMAND_RE = re.compile(r'(?<=twitchup\()(.*?)(?=\))')
 SUBREDDIT_NAME = os.environ['SUBREDDIT_NAME']
 
 
@@ -48,7 +48,7 @@ if __name__ == '__main__':
     twitch = TwitchClient()
 
     for match in COMMAND_RE.finditer(sidebar):
-        stream_name = match.group(1).strip('()')
+        stream_name = match.group(0).strip('()')
         stream_data = twitch.get_stream(stream_name)
         if stream_data is not None:
             link_title = 'twitch-online'
@@ -56,7 +56,7 @@ if __name__ == '__main__':
             link_title = 'twitch-offline'
 
         markdown_link = f"[{stream_name}](https://twitch.tv/{stream_name} '{link_title}')"
-        sidebar = sidebar.replace(match.group(0), markdown_link)
+        sidebar = sidebar.replace(f'twitchup({stream_name})', markdown_link)
 
     mod_relationship = reddit.subreddit(SUBREDDIT_NAME).mod
     mod_relationship.update(description=sidebar)
