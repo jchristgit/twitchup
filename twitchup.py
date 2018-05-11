@@ -59,4 +59,10 @@ if __name__ == '__main__':
         sidebar = sidebar.replace(f'twitchup({stream_name})', markdown_link)
 
     mod_relationship = reddit.subreddit(SUBREDDIT_NAME).mod
-    mod_relationship.update(description=sidebar)
+    old_description = mod_relationship.settings()['description']
+
+    # Only update the sidebar if we made any actual changes.
+    if sidebar != old_description:
+        mod_relationship.update(description=sidebar)
+    else:
+        print('not updating sidebar as there is no difference to the current one')

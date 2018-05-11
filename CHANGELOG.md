@@ -5,6 +5,10 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/)
 and this project aims to adhere to [Semantic Versioning](http://semver.org/spec/v2.0.0.html).
 
 
+## [Unreleased]
+### Added
+- The subreddit sidebar is no longer updated if no changes would be made by an update.
+
 ## [0.1.1] - 2018-05-10
 ### Fixed
 - Fixed RegEx matching for the `twitchup` matching more than wanted.
@@ -15,3 +19,7 @@ and this project aims to adhere to [Semantic Versioning](http://semver.org/spec/
 - `CHANGELOG.md` to document notable changes to the project.
 - `README.md` with setup instructions and basic usage details.
 - `pyproject.toml` and `pyproject.lock` files for local setup through `poetry`.
+
+
+[Unreleased]: https://github.com/olivierlacan/keep-a-changelog/compare/v0.1.1...HEAD
+[0.1.1]: https://github.com/Volcyy/twitchup/compare/v0.1.0...v1.1.1
