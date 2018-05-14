@@ -9,6 +9,9 @@ and this project aims to adhere to [Semantic Versioning](http://semver.org/spec/
 ### Added
 - The subreddit sidebar is no longer updated if no changes would be made by an update.
 
+### Changed
+- The project now uses `Pipfile` instead of `pyproject.toml`.
+
 ## [0.1.1] - 2018-05-10
 ### Fixed
 - Fixed RegEx matching for the `twitchup` matching more than wanted.
