@@ -71,7 +71,7 @@ if __name__ == '__main__':
     streams = {
         stream_name: twitch.get_stream(stream_name)
         for stream_name in {
-            match.group(0).lstrip('twitchup(').rstrip(')')
+            match.group(0)[9:-1]
             for sidebar in sidebars.values()
             for match in COMMAND_RE.finditer(sidebar)
         }
@@ -80,7 +80,7 @@ if __name__ == '__main__':
 
     for subreddit_name, sidebar in sidebars.items():
         for match in COMMAND_RE.finditer(sidebar):
-            stream_name = match.group(0).lstrip('twitchup(').rstrip(')')
+            stream_name = match.group(0)[9:-1]
             if streams[stream_name] is not None:
                 link_title = 'twitch-online'
             else:

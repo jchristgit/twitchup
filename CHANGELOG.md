@@ -8,6 +8,9 @@ and this project aims to adhere to [Semantic Versioning](http://semver.org/spec/
 ### Added
 - Now allows changing the log level via `argparse`.
 
+### Fixed
+- Fixed command invocation sometimes turning up weird results.
+
 
 ## [0.2.0] - 2018-09-15
 ### Added
