@@ -4,6 +4,10 @@ All notable changes will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/)
 and this project aims to adhere to [Semantic Versioning](http://semver.org/spec/v2.0.0.html).
 
+## Unreleased
+### Added
+- Now allows changing the log level via `argparse`.
+
 
 ## [0.2.0] - 2018-09-15
 ### Added

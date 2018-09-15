@@ -1,3 +1,4 @@
+import argparse
 import logging
 import os
 import re
@@ -16,10 +17,7 @@ reddit = praw.Reddit(
     user_agent=f"{sys.platform}:twitchup:0.2.0 (by /u/Volcyy)"
 )
 
-logging.basicConfig(
-    level=logging.INFO,
-    format='%(asctime)s | %(name)-10s | %(levelname)-8s | %(message)s'
-)
+logging.basicConfig(format='%(asctime)s | %(name)-10s | %(levelname)-8s | %(message)s')
 logging.getLogger('urllib3.connectionpool').setLevel(logging.WARN)
 logging.getLogger('prawcore').setLevel(logging.WARN)
 log = logging.getLogger('twitchup')
@@ -52,6 +50,16 @@ class TwitchClient:
 
 
 if __name__ == '__main__':
+    parser = argparse.ArgumentParser()
+    parser.add_argument(
+        '--log-level',
+        help="Level to emit logging output at.",
+        default='INFO',
+        choices=('DEBUG', 'INFO', 'WARN', 'ERROR', 'CRITICAL')
+    )
+    args = parser.parse_args()
+    log.setLevel(args.log_level)
+
     sidebars = {}
     for template in os.listdir('templates'):
         with open(f'templates/{template}', 'r') as f:
@@ -79,8 +87,9 @@ if __name__ == '__main__':
                 link_title = 'twitch-offline'
 
             markdown_link = f"[{stream_name}](https://twitch.tv/{stream_name} '{link_title}')"
-            sidebar = sidebar.replace(f'twitchup({stream_name})', markdown_link)
-            log.debug(f"Added Twitch link on /r/{subreddit_name} for https://twitch.tv/{stream_name}.")
+            invocation = f'twitchup({stream_name})'
+            sidebar = sidebar.replace(invocation, markdown_link)
+            log.debug(f"Replaced `{invocation}` with `{markdown_link}`.")
 
         mod_relationship = reddit.subreddit(subreddit_name).mod
         old_description = mod_relationship.settings()['description']
