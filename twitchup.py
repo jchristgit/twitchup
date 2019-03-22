@@ -40,7 +40,7 @@ class TwitchClient:
             sleep_seconds = 10
             log.info(f'Sleeping for {sleep_seconds} as no requests are left in this time period.')
             time.sleep(sleep_seconds)
-            return get_stream(stream_login)
+            return self.get_stream(stream_login)
 
         response.raise_for_status()
         response_json = response.json()
