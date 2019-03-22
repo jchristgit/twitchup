@@ -36,10 +36,11 @@ class TwitchClient:
     def get_stream(self, stream_login: str):
         response = self.session.get(f"{self.STREAM_ENDPOINT}?user_login={stream_login}")
 
-        if response.headers['Ratelimit-Remaining'] == 0:
-            sleep_seconds = response.headers['Ratelimit-Remaining'] - time.time()
+        if response.status_code == 429 or response.headers['Ratelimit-Remaining'] == 0:
+            sleep_seconds = 10
             log.info(f'Sleeping for {sleep_seconds} as no requests are left in this time period.')
             time.sleep(sleep_seconds)
+            return get_stream(stream_login)
 
         response.raise_for_status()
         response_json = response.json()
