@@ -127,7 +127,7 @@ if __name__ == '__main__':
     for subreddit_name, template in widgets.items():
         rendered = render_template(template, streams)
         for widget in reddit.subreddit(subreddit_name).widgets.sidebar:
-            if isinstance(widget, praw.models.TextArea):
+            if isinstance(widget, (praw.models.CustomWidget, praw.models.TextArea)):
                 if widget.shortName != 'Streams':
                     log.info("Skipping non-stream text area %r on %r.", widget.shortName, subreddit_name)
 

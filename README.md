@@ -22,10 +22,10 @@ Install dependencies: `pip3 install -r requirements.txt`.
 
 Create a directory named `templates` (or any place of your liking, as specified
 by the `--template-directory` switch) and create subdirectories named after the
-desired subreddits in there. To template a text-area widget with the title
-"Streams", create a file named `widget.md` in said subdirectory. For templating
-the old-style sidebar, create a file named `sidebar.md` instead. You can also
-create both files. Use `twitchup(<stream_name>)` where you want stream
+desired subreddits in there. To template a custom or text area widget with the
+title "Streams", create a file named `widget.md` in said subdirectory. For
+templating the old-style sidebar, create a file named `sidebar.md` instead. You
+can also create both files. Use `twitchup(<stream_name>)` where you want stream
 information to be placed.  `twitchup` generates the following:
 
 For an online stream, `twitchup(name)` becomes:

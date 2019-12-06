@@ -6,7 +6,8 @@ and this project aims to adhere to [Semantic Versioning](http://semver.org/spec/
 
 
 ## Unreleased
-### Changed
+### Added
+- Template custom widgets with matching title if present.
 
 
 ## v0.3.1 - 2019-12-06
