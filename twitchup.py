@@ -129,7 +129,12 @@ if __name__ == '__main__':
         for widget in reddit.subreddit(subreddit_name).widgets.sidebar:
             if isinstance(widget, (praw.models.CustomWidget, praw.models.TextArea)):
                 if widget.shortName != 'Streams':
-                    log.info("Skipping non-stream text area %r on %r.", widget.shortName, subreddit_name)
+                    log.info(
+                        "Skipping non-stream widget %r (%s) on %r.",
+                        widget.shortName,
+                        widget.__class__.__name__,
+                        subreddit_name
+                    )
 
                 elif widget.text == rendered:
                     log.info(
