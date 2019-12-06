@@ -1,2 +1,1 @@
 praw==6.4.0
-requests==2.18

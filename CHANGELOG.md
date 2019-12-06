@@ -4,18 +4,24 @@ All notable changes will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/)
 and this project aims to adhere to [Semantic Versioning](http://semver.org/spec/v2.0.0.html).
 
+
 ## Unreleased
 ### Added
 - Now allows changing the log level via `argparse`.
+- Support for widgets. Each subreddit in the template directory now is its own
+  directory, and can contain a `sidebar.md` file to continue templating the old
+  template, and a `widget.md` file to template a text area widget with the title
+  "Streams".
 
 ### Fixed
 - Fixed command invocation sometimes turning up weird results.
 
 ### Removed
 - `pipenv` in favour of plain `pip` and `requirements.txt`.
+- Direct dependency to `requests`.
 
 
-## [0.2.0] - 2018-09-15
+## v0.2.0 - 2018-09-15
 ### Added
 - The subreddit sidebar is no longer updated if no changes would be made by an update.
 - Now supports multiple templates.
@@ -25,17 +31,17 @@ and this project aims to adhere to [Semantic Versioning](http://semver.org/spec/
 ### Changed
 - The project now uses `Pipfile` instead of `pyproject.toml`.
 
-## [0.1.1] - 2018-05-10
+
+## v0.1.1 - 2018-05-10
 ### Fixed
 - Fixed RegEx matching for the `twitchup` matching more than wanted.
 
-## [0.1.0] - 2018-05-09
+
+## v0.1.0 - 2018-05-09
 ### Added
 - The `twitchup.py` script, providing basic stream status fetching & sidebar updates.
 - `CHANGELOG.md` to document notable changes to the project.
 - `README.md` with setup instructions and basic usage details.
 - `pyproject.toml` and `pyproject.lock` files for local setup through `poetry`.
 
-
-[Unreleased]: https://github.com/olivierlacan/keep-a-changelog/compare/v0.1.1...HEAD
-[0.1.1]: https://github.com/Volcyy/twitchup/compare/v0.1.0...v1.1.1
+<!-- vim: set textwidth=80 sw=2 ts=2: -->
