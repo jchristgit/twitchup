@@ -6,6 +6,10 @@ and this project aims to adhere to [Semantic Versioning](http://semver.org/spec/
 
 
 ## Unreleased
+### Changed
+
+
+## v0.3.0 - 2019-12-06
 ### Added
 - Now allows changing the log level via `argparse`.
 - Support for widgets. Each subreddit in the template directory now is its own
