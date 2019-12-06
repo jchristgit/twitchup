@@ -75,12 +75,18 @@ if __name__ == '__main__':
         default='INFO',
         choices=('DEBUG', 'INFO', 'WARN', 'ERROR', 'CRITICAL')
     )
+    parser.add_argument(
+        '-t',
+        '--template-directory',
+        help="Where to find templates.",
+        default='templates'
+    )
     args = parser.parse_args()
     log.setLevel(args.log_level)
 
     sidebars = {}
     widgets = {}
-    template_dir = Path('templates')
+    template_dir = Path(args.template_directory)
     for subreddit_directory in template_dir.iterdir():
         subreddit_name = subreddit_directory.name
         subreddit_templates = template_dir / subreddit_name

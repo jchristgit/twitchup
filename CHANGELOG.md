@@ -9,6 +9,11 @@ and this project aims to adhere to [Semantic Versioning](http://semver.org/spec/
 ### Changed
 
 
+## v0.3.1 - 2019-12-06
+### Added
+- Added the `--template-directory` argument.
+
+
 ## v0.3.0 - 2019-12-06
 ### Added
 - Now allows changing the log level via `argparse`.
