@@ -13,7 +13,7 @@ Set the following environment variables:
 You can get the reddit credentials [here](https://www.reddit.com/prefs/apps/).
 Make sure to add the bot as a moderator on the specific subreddit.
 
-Install dependencies: `pip3 install requests praw` (or through `pipenv`: `pipenv install`).
+Install dependencies: `pip3 install -r requirements.txt`.
 
 ## Usage
 Create a directory named `templates` and place your files in the form

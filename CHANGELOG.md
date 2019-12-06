@@ -11,6 +11,9 @@ and this project aims to adhere to [Semantic Versioning](http://semver.org/spec/
 ### Fixed
 - Fixed command invocation sometimes turning up weird results.
 
+### Removed
+- `pipenv` in favour of plain `pip` and `requirements.txt`.
+
 
 ## [0.2.0] - 2018-09-15
 ### Added
