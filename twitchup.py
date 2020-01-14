@@ -8,6 +8,7 @@ import re
 import sys
 import time
 from pathlib import Path
+from urllib.error import HTTPError
 from urllib.request import Request, urlopen
 
 import praw
@@ -43,7 +44,7 @@ def get_stream_information(name: str):
             if streams['data']:
                 return streams['data'][0]
             return None
-    except urllib.error.HTTPError as response:
+    except HTTPError as response:
         if response.code == 429:
             reset_at = float(response.headers['Ratelimit-Reset'])
             sleep_for = reset_at - time.time()
