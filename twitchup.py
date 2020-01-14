@@ -51,7 +51,7 @@ def get_stream_information(name: str):
             time.sleep(sleep_for)
             return get_stream_information(name)
         raise
-   
+
 
 def render_template(template: str, streams: dict) -> str:
     for match in COMMAND_RE.finditer(template):
