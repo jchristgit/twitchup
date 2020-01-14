@@ -35,21 +35,23 @@ def get_stream_information(name: str):
         url=f"https://api.twitch.tv/helix/streams?user_login={name}",
         headers={'Client-Id': os.environ['TWITCH_CLIENT_ID']}
     )
-    with urlopen(request) as response:
-        if response.getcode() == 429:
+    try:
+        with urlopen(request) as response:
+            if response.getcode() != 200:
+                raise ValueError(f"unexpected code %d, response %r", response.getcode(), response.read())
+            streams = json.load(response)
+            if streams['data']:
+                return streams['data'][0]
+            return None
+    except urllib.error.HTTPError as response:
+        if response.code == 429:
             reset_at = float(response.headers['Ratelimit-Reset'])
             sleep_for = reset_at - time.time()
             log.info("Hit ratelimit, waiting for %.2f seconds before retry.", sleep_for)
             time.sleep(sleep_for)
             return get_stream_information(name)
-
-        elif response.getcode() != 200:
-            raise ValueError(f"unexpected code %d, response %r", response.getcode(), response.read())
-        streams = json.load(response)
-        if streams['data']:
-            return streams['data'][0]
-        return None
-        
+        raise
+   
 
 def render_template(template: str, streams: dict) -> str:
     for match in COMMAND_RE.finditer(template):
