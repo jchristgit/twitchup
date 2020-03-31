@@ -7,6 +7,7 @@ import os
 import re
 import sys
 import time
+from typing import Generator, List, Set
 from pathlib import Path
 from urllib.error import HTTPError
 from urllib.request import Request, urlopen
@@ -31,9 +32,15 @@ COMMAND_RE = re.compile(r'twitchup\((\w+)\)')
 SUBREDDIT_NAME = os.environ['SUBREDDIT_NAME']
 
 
-def get_stream_information(name: str):
+def chunks(over: List[str], size: int) -> Generator[List[str], None, None]:
+    for i in range(0, len(over), size):
+        yield over[i:i + size]
+
+
+def load_online(names: List[str]):
+    login_params = '&'.join(f'user_login={login}' for login in names)
     request = Request(
-        url=f"https://api.twitch.tv/helix/streams?user_login={name}",
+        url=f"https://api.twitch.tv/helix/streams?first=100&{login_params}",
         headers={'Client-Id': os.environ['TWITCH_CLIENT_ID']}
     )
     try:
@@ -41,23 +48,28 @@ def get_stream_information(name: str):
             if response.getcode() != 200:
                 raise ValueError(f"unexpected code %d, response %r", response.getcode(), response.read())
             streams = json.load(response)
-            if streams['data']:
-                return streams['data'][0]
-            return None
+            return {stream['user_name'] for stream in streams.get('data', ())}
     except HTTPError as response:
         if response.code == 429:
             reset_at = float(response.headers['Ratelimit-Reset'])
             sleep_for = reset_at - time.time()
             log.info("Hit ratelimit, waiting for %.2f seconds before retry.", sleep_for)
             time.sleep(sleep_for)
-            return get_stream_information(name)
+            return load_online(names)
         raise
 
 
-def render_template(template: str, streams: dict) -> str:
+def get_online_streams(streams: List[str]) -> Set[str]:
+    online = set()
+    for logins in chunks(over=streams, size=100):
+        online |= load_online(logins)
+    return online
+
+
+def render_template(template: str, online_streams: Set[str]) -> str:
     for match in COMMAND_RE.finditer(template):
         stream_name = match.group(0)[9:-1]
-        if streams[stream_name] is not None:
+        if stream_name in online_streams:
             link_title = 'twitch-online'
         else:
             link_title = 'twitch-offline'
@@ -105,18 +117,19 @@ if __name__ == '__main__':
             widgets[subreddit_name] = widget_path.read_text()
             log.info("Obtained widget template for /r/%s.", subreddit_name)
 
-    streams = {
-        stream_name: get_stream_information(stream_name)
-        for stream_name in {
-            match.group(0)[9:-1]
-            for template in itertools.chain(sidebars.values(), widgets.values())
-            for match in COMMAND_RE.finditer(template)
-        }
+    names = {
+        match.group(0)[9:-1]
+        for template in itertools.chain(sidebars.values(), widgets.values())
+        for match in COMMAND_RE.finditer(template)
     }
-    log.info("Loaded stream information for %d streams.", len(streams))
+    online = get_online_streams(list(names))
+    log.info(
+        "Loaded stream information for %d streams, %d online.",
+        len(names), len(online)
+    )
 
     for subreddit_name, template in sidebars.items():
-        sidebar = render_template(template, streams)
+        sidebar = render_template(template, online)
         mod_relationship = reddit.subreddit(subreddit_name).mod
         old_description = mod_relationship.settings()['description']
 
@@ -128,7 +141,7 @@ if __name__ == '__main__':
             log.info("Omitting sidebar update on %r as no changes would be done.", subreddit_name)
 
     for subreddit_name, template in widgets.items():
-        rendered = render_template(template, streams)
+        rendered = render_template(template, online)
         for widget in reddit.subreddit(subreddit_name).widgets.sidebar:
             if isinstance(widget, (praw.models.CustomWidget, praw.models.TextArea)):
                 if widget.shortName != 'Streams':
