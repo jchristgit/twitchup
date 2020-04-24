@@ -8,6 +8,7 @@ and this project aims to adhere to [Semantic Versioning](http://semver.org/spec/
 ## Unreleased
 ### Added
 - Template custom widgets with matching title if present.
+- Support for using the new OAuth-based Twitch API.
 
 
 ## v0.3.1 - 2019-12-06

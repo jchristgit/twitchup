@@ -20,7 +20,7 @@ reddit = praw.Reddit(
     client_secret=os.environ['REDDIT_CLIENT_SECRET'],
     username=os.environ['REDDIT_USERNAME'],
     password=os.environ['REDDIT_PASSWORD'],
-    user_agent=f"{sys.platform}:twitchup:0.2.0 (by /u/Volcyy)"
+    user_agent=f"{sys.platform}:twitchup:0.3.0 (by /u/Volcyy)"
 )
 
 logging.basicConfig(format='%(asctime)s | %(name)-10s | %(levelname)-8s | %(message)s')
@@ -37,11 +37,30 @@ def chunks(over: List[str], size: int) -> Generator[List[str], None, None]:
         yield over[i:i + size]
 
 
-def load_online(names: List[str]):
+def fetch_access_token() -> str:
+    request = Request(
+        url=(
+            f"https://id.twitch.tv/oauth2/token"
+            f"?client_id={os.environ['TWITCH_CLIENT_ID']}"
+            f"&client_secret={os.environ['TWITCH_CLIENT_SECRET']}"
+            f"&grant_type=client_credentials"
+        ),
+        method='POST',
+    )
+
+    with urlopen(request) as response:
+        result = json.load(response)
+    return result['access_token']
+
+
+def load_online(names: List[str], access_token: str):
     login_params = '&'.join(f'user_login={login}' for login in names)
     request = Request(
         url=f"https://api.twitch.tv/helix/streams?first=100&{login_params}",
-        headers={'Client-Id': os.environ['TWITCH_CLIENT_ID']}
+        headers={
+            'Authorization': f'Bearer {access_token}',
+            'Client-Id': os.environ['TWITCH_CLIENT_ID']
+        }
     )
     try:
         with urlopen(request) as response:
@@ -59,10 +78,10 @@ def load_online(names: List[str]):
         raise
 
 
-def get_online_streams(streams: List[str]) -> Set[str]:
+def get_online_streams(streams: List[str], access_token: str) -> Set[str]:
     online = set()
     for logins in chunks(over=streams, size=100):
-        online |= load_online(logins)
+        online |= load_online(logins, access_token)
     return online
 
 
@@ -98,6 +117,7 @@ if __name__ == '__main__':
     )
     args = parser.parse_args()
     log.setLevel(args.log_level)
+    access_token = fetch_access_token()
 
     sidebars = {}
     widgets = {}
@@ -122,7 +142,7 @@ if __name__ == '__main__':
         for template in itertools.chain(sidebars.values(), widgets.values())
         for match in COMMAND_RE.finditer(template)
     }
-    online = get_online_streams(list(names))
+    online = get_online_streams(list(names), access_token)
     log.info(
         "Loaded stream information for %d streams, %d online.",
         len(names), len(online)
