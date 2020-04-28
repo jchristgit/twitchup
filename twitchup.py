@@ -140,12 +140,12 @@ if __name__ == '__main__':
         with contextlib.suppress(FileNotFoundError):
             sidebar_path = subreddit_templates / 'sidebar.md'
             sidebars[subreddit_name] = sidebar_path.read_text()
-            log.info("Obtained sidebar template for /r/%s.", subreddit_name)
+            log.debug("Obtained sidebar template for /r/%s.", subreddit_name)
 
         with contextlib.suppress(FileNotFoundError):
             widget_path = subreddit_templates / 'widget.md'
             widgets[subreddit_name] = widget_path.read_text()
-            log.info("Obtained widget template for /r/%s.", subreddit_name)
+            log.debug("Obtained widget template for /r/%s.", subreddit_name)
 
     names = {
         match.group(0)[9:-1]
@@ -180,7 +180,7 @@ if __name__ == '__main__':
         for widget in reddit.subreddit(subreddit_name).widgets.sidebar:
             if isinstance(widget, (praw.models.CustomWidget, praw.models.TextArea)):
                 if widget.shortName != 'Streams':
-                    log.info(
+                    log.debug(
                         "Skipping non-stream widget %r (%s) on %r.",
                         widget.shortName,
                         widget.__class__.__name__,
