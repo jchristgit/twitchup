@@ -97,7 +97,7 @@ def render_template(template: str, online_streams: Set[str]) -> str:
         invocation = f'twitchup({stream_name})'
         log.debug("Replaced %r with %r.", invocation, markdown_link)
         template = template.replace(invocation, markdown_link)
-    return template
+    return template.strip()
 
 
 if __name__ == '__main__':
