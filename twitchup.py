@@ -154,7 +154,10 @@ if __name__ == '__main__':
     }
     online = get_online_streams(list(names), access_token)
     log.info(
-        "Loaded stream information for %d streams, %d online.", len(names), len(online)
+        "Loaded stream information for %d streams, %d online (%s)",
+        len(names),
+        len(online),
+        ', '.join(online),
     )
 
     for subreddit_name, template in sidebars.items():
