@@ -188,6 +188,6 @@ if __name__ == '__main__':
                             exc_info=err
                         )
                     else:
-                        log.info("Rendered sidebar update on %r.", subreddit_name)
+                        log.info("Rendered widget update on %r.", subreddit_name)
 
     log.info("Done.")
