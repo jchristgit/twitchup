@@ -23,7 +23,11 @@ reddit = praw.Reddit(
     user_agent=f"{sys.platform}:twitchup:0.3.0 (by /u/Volcyy)"
 )
 
-logging.basicConfig(format='%(asctime)s | %(name)-10s | %(levelname)-8s | %(message)s')
+logging.basicConfig(
+    format=os.getenv(
+        'LOG_FORMAT', '%(asctime)s | %(name)-10s | %(levelname)-8s | %(message)s'
+    )
+)
 logging.getLogger('urllib3.connectionpool').setLevel(logging.WARN)
 logging.getLogger('prawcore').setLevel(logging.WARN)
 log = logging.getLogger('twitchup')
