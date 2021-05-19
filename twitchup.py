@@ -13,6 +13,7 @@ from urllib.error import HTTPError
 from urllib.request import Request, urlopen
 
 import praw
+from prawcore import NotFound
 
 
 reddit = praw.Reddit(
@@ -20,7 +21,7 @@ reddit = praw.Reddit(
     client_secret=os.environ['REDDIT_CLIENT_SECRET'],
     username=os.environ['REDDIT_USERNAME'],
     password=os.environ['REDDIT_PASSWORD'],
-    user_agent=f"{sys.platform}:twitchup:0.3.0 (by /u/Volcyy)",
+    user_agent=f"{sys.platform}:twitchup:0.3.2 (by /u/Volcyy)",
 )
 
 logging.basicConfig(
@@ -163,17 +164,23 @@ if __name__ == '__main__':
     for subreddit_name, template in sidebars.items():
         sidebar = render_template(template, online)
         mod_relationship = reddit.subreddit(subreddit_name).mod
-        old_description = mod_relationship.settings()['description']
-
-        # Only update the sidebar if we made any actual changes.
-        if sidebar != old_description:
-            mod_relationship.update(description=sidebar)
-            log.info("Updated sidebar on %r with new stream data.", subreddit_name)
-        else:
-            log.info(
-                "Omitting sidebar update on %r as no changes would be done.",
+        try:
+            old_description = mod_relationship.settings()['description']
+        except NotFound:
+            log.warning(
+                "Cannot obtain settings for %r, are permissions available?",
                 subreddit_name,
             )
+        else:
+            # Only update the sidebar if we made any actual changes.
+            if sidebar != old_description:
+                mod_relationship.update(description=sidebar)
+                log.info("Updated sidebar on %r with new stream data.", subreddit_name)
+            else:
+                log.info(
+                    "Omitting sidebar update on %r as no changes would be done.",
+                    subreddit_name,
+                )
 
     for subreddit_name, template in widgets.items():
         rendered = render_template(template, online)

@@ -10,6 +10,9 @@ and this project aims to adhere to [Semantic Versioning](http://semver.org/spec/
 - Template custom widgets with matching title if present.
 - Support for using the new OAuth-based Twitch API.
 
+### Fixed
+- Gracefully handle subreddits with missing permissions.
+
 
 ## v0.3.1 - 2019-12-06
 ### Added
