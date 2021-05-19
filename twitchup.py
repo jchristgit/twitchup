@@ -203,6 +203,11 @@ if __name__ == '__main__':
                 else:
                     try:
                         widget.mod.update(text=rendered)
+                    except Forbidden:
+                        log.warning(
+                            "Unable to update sidebar widget on %r, forbidden.",
+                            subreddit_name,
+                        )
                     except Exception as err:
                         log.exception(
                             "Unable to update sidebar widget on %r:",
