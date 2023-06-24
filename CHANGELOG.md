@@ -10,6 +10,8 @@ and this project aims to adhere to [Semantic Versioning](http://semver.org/spec/
 - The new required `OWNER_NAME` configuration setting.
 - Template custom widgets with matching title if present.
 - Support for using the new OAuth-based Twitch API.
+- Optionally cache last rendered contents on the filesystem to allow omitting
+  remote updates on the Reddit API without requesting content from it.
 
 ### Fixed
 - Gracefully handle subreddits with missing permissions.

@@ -102,7 +102,39 @@ def render_template(template: str, online_streams: Set[str]) -> str:
     return template.strip()
 
 
-def main():
+def cache_file_for(subreddit: str, *, kind: str, cache_directory: str) -> Path:
+    """Return the path to the cache file for `kind` for the given `subreddit`."""
+    return Path(cache_directory) / f'{subreddit}-{kind}.txt'
+
+
+def last_rendered(
+    subreddit: str, *, kind: str, cache_directory: str | None
+) -> str | None:
+    """Return the last rendered `kind` for the given `subreddit`."""
+
+    if cache_directory is None:
+        return None
+
+    path = cache_file_for(subreddit, kind=kind, cache_directory=cache_directory)
+    if not path.exists():
+        return None
+
+    return path.read_text()
+
+
+def update_last_rendered(
+    content: str, *, subreddit: str, kind: str, cache_directory: str | None
+):
+    """Update the last rendered `kind` for the given `subreddit`."""
+
+    if cache_directory is None:
+        return False
+
+    path = cache_file_for(subreddit, kind=kind, cache_directory=cache_directory)
+    path.write_text(content)
+
+
+def create_parser():
     parser = argparse.ArgumentParser()
     parser.add_argument(
         '-l',
@@ -117,7 +149,21 @@ def main():
         help="Where to find templates.",
         default='templates',
     )
-    args = parser.parse_args()
+    parser.add_argument(
+        '-c',
+        '--cache-directory',
+        help=(
+            "Directory where twitchup caches last subreddit states "
+            "to omit updates to sidebars and widgets if no update "
+            "would be necessary. [$CACHE_DIRECTORY]"
+        ),
+        default=os.environ.get('CACHE_DIRECTORY'),
+    )
+    return parser
+
+
+def main():
+    args = create_parser().parse_args()
     log.setLevel(args.log_level)
     access_token = fetch_access_token()
     reddit = praw.Reddit(
@@ -162,59 +208,64 @@ def main():
 
     for subreddit_name, template in sidebars.items():
         sidebar = render_template(template, online)
-        mod_relationship = reddit.subreddit(subreddit_name).mod
-        try:
-            old_description = mod_relationship.settings()['description']
-        except NotFound:
-            log.warning(
-                "Cannot obtain settings for %r, are permissions available?",
+        last_rendered_sidebar = last_rendered(
+            subreddit_name, kind='sidebar', cache_directory=args.cache_directory,
+        )
+        if sidebar != last_rendered_sidebar:
+            mod_relationship = reddit.subreddit(subreddit_name).mod
+            mod_relationship.update(description=sidebar)
+            update_last_rendered(
+                sidebar, subreddit=subreddit_name,
+                kind='sidebar', cache_directory=args.cache_directory,
+            )
+            log.info("Updated sidebar on %r with new stream data.", subreddit_name)
+        else:
+            log.info(
+                "Omitting sidebar update on %r as no changes would be done.",
                 subreddit_name,
             )
-        else:
-            # Only update the sidebar if we made any actual changes.
-            if sidebar != old_description:
-                mod_relationship.update(description=sidebar)
-                log.info("Updated sidebar on %r with new stream data.", subreddit_name)
-            else:
-                log.info(
-                    "Omitting sidebar update on %r as no changes would be done.",
-                    subreddit_name,
-                )
 
     for subreddit_name, template in widgets.items():
         rendered = render_template(template, online)
-        for widget in reddit.subreddit(subreddit_name).widgets.sidebar:
-            if isinstance(widget, (praw.models.CustomWidget, praw.models.TextArea)):
-                if widget.shortName != 'Streams':
-                    log.debug(
-                        "Skipping non-stream widget %r (%s) on %r.",
-                        widget.shortName,
-                        widget.__class__.__name__,
-                        subreddit_name,
-                    )
-
-                elif widget.text == rendered:
-                    log.info(
-                        "Omitting widget update on %r as no changes would be done.",
-                        subreddit_name,
-                    )
-
-                else:
-                    try:
-                        widget.mod.update(text=rendered)
-                    except Forbidden:
-                        log.warning(
-                            "Unable to update sidebar widget on %r, forbidden.",
+        last_rendered_sidebar_widget = last_rendered(
+            subreddit_name, kind='widget', cache_directory=args.cache_directory,
+        )
+        if rendered != last_rendered_sidebar_widget:
+            for widget in reddit.subreddit(subreddit_name).widgets.sidebar:
+                if isinstance(widget, (praw.models.CustomWidget, praw.models.TextArea)):
+                    if widget.shortName != 'Streams':
+                        log.debug(
+                            "Skipping non-stream widget %r (%s) on %r.",
+                            widget.shortName,
+                            widget.__class__.__name__,
                             subreddit_name,
                         )
-                    except Exception as err:
-                        log.exception(
-                            "Unable to update sidebar widget on %r:",
-                            subreddit_name,
-                            exc_info=err,
-                        )
+
                     else:
-                        log.info("Rendered widget update on %r.", subreddit_name)
+                        try:
+                            widget.mod.update(text=rendered)
+                        except Forbidden:
+                            log.warning(
+                                "Unable to update sidebar widget on %r, forbidden.",
+                                subreddit_name,
+                            )
+                        except Exception as err:
+                            log.exception(
+                                "Unable to update sidebar widget on %r:",
+                                subreddit_name,
+                                exc_info=err,
+                            )
+                        else:
+                            log.info("Rendered widget update on %r.", subreddit_name)
+                            update_last_rendered(
+                                rendered, subreddit=subreddit_name,
+                                kind='widget', cache_directory=args.cache_directory,
+                            )
+        else:
+            log.info(
+                "Omitting widget update on %r as no changes would be done.",
+                subreddit_name,
+            )
 
     log.info("Done.")
 
