@@ -111,7 +111,7 @@ def render_template(template: str, online_streams: Set[str]) -> str:
     return template.strip()
 
 
-if __name__ == '__main__':
+def main():
     parser = argparse.ArgumentParser()
     parser.add_argument(
         '-l',
@@ -218,3 +218,7 @@ if __name__ == '__main__':
                         log.info("Rendered widget update on %r.", subreddit_name)
 
     log.info("Done.")
+
+
+if __name__ == '__main__':
+    main()
