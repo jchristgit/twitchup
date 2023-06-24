@@ -34,7 +34,6 @@ logging.getLogger('prawcore').setLevel(logging.WARN)
 log = logging.getLogger('twitchup')
 
 COMMAND_RE = re.compile(r'twitchup\((\w+)\)')
-SUBREDDIT_NAME = os.environ['SUBREDDIT_NAME']
 
 
 def chunks(over: List[str], size: int) -> Generator[List[str], None, None]:

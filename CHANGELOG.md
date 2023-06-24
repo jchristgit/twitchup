@@ -18,6 +18,10 @@ and this project aims to adhere to [Semantic Versioning](http://semver.org/spec/
 - Updated requirements to praw 7.6.0. The previous version should still work,
   this was mainly bumped because Debian stable bumped its version.
 
+### Removed
+- Obsolete requirement for the `SUBREDDIT_NAME` variable. The `templates`
+  directory is now used for this.
+
 
 ## v0.3.1 - 2019-12-06
 ### Added
