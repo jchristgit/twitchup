@@ -21,7 +21,7 @@ reddit = praw.Reddit(
     client_secret=os.environ['REDDIT_CLIENT_SECRET'],
     username=os.environ['REDDIT_USERNAME'],
     password=os.environ['REDDIT_PASSWORD'],
-    user_agent=f"{sys.platform}:twitchup:0.3.2 (by /u/Volcyy)",
+    user_agent=f"{sys.platform}:twitchup:0.3.2 (by /u/{os.environ['OWNER_NAME']})",
 )
 
 logging.basicConfig(

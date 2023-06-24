@@ -12,6 +12,8 @@ Set the following environment variables:
 - `REDDIT_USERNAME` and `REDDIT_PASSWORD` for the bot account
 - `TWITCH_CLIENT_ID`: your twitch app client ID (get it
   [here](https://dev.twitch.tv/dashboard/apps))
+- `OWNER_NAME`: the name of the bot's owner on reddit, without the leading `/u/`
+  part.
 
 You can get the reddit credentials [here](https://www.reddit.com/prefs/apps/).
 Make sure to add the bot as a moderator on the specific subreddit.
