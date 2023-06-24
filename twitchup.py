@@ -16,14 +16,6 @@ import praw
 from prawcore import NotFound
 
 
-reddit = praw.Reddit(
-    client_id=os.environ['REDDIT_CLIENT_ID'],
-    client_secret=os.environ['REDDIT_CLIENT_SECRET'],
-    username=os.environ['REDDIT_USERNAME'],
-    password=os.environ['REDDIT_PASSWORD'],
-    user_agent=f"{sys.platform}:twitchup:0.4.0 (by /u/{os.environ['OWNER_NAME']})",
-)
-
 logging.basicConfig(
     format=os.getenv(
         'LOG_FORMAT', '%(asctime)s | %(name)-10s | %(levelname)-8s | %(message)s'
@@ -128,6 +120,14 @@ def main():
     args = parser.parse_args()
     log.setLevel(args.log_level)
     access_token = fetch_access_token()
+    reddit = praw.Reddit(
+        client_id=os.environ['REDDIT_CLIENT_ID'],
+        client_secret=os.environ['REDDIT_CLIENT_SECRET'],
+        username=os.environ['REDDIT_USERNAME'],
+        password=os.environ['REDDIT_PASSWORD'],
+        user_agent=f"{sys.platform}:twitchup:0.4.0 (by /u/{os.environ['OWNER_NAME']})",
+    )
+
 
     sidebars = {}
     widgets = {}
