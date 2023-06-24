@@ -5,13 +5,18 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/)
 and this project aims to adhere to [Semantic Versioning](http://semver.org/spec/v2.0.0.html).
 
 
-## Unreleased
+## v0.4.0 - 2023-06-24
 ### Added
+- The new required `OWNER_NAME` configuration setting.
 - Template custom widgets with matching title if present.
 - Support for using the new OAuth-based Twitch API.
 
 ### Fixed
 - Gracefully handle subreddits with missing permissions.
+
+### Changed
+- Updated requirements to praw 7.6.0. The previous version should still work,
+  this was mainly bumped because Debian stable bumped its version.
 
 
 ## v0.3.1 - 2019-12-06
