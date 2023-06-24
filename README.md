@@ -46,7 +46,7 @@ To run the script, simply use `python3 twitchup.py`.
 
 
 ## Disclaimer
-`twitchup` is not affiliated nor endorsed by Twitch.
+`twitchup` is not affiliated nor endorsed by Twitch or Reddit.
 
 ## Credits
 `twitchup` is inspired by [`twitchit`](https://github.com/jensechu/twitchit).
